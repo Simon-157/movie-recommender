@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" media="all">
+</head>
+
+<body class="body">
+    <table class="layui-hide" id="test"></table>
+    <script type="text/javascript" src="../static/js/jquery.js"></script>
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+
+    <!-- Add Layui Layer module -->
+    <script src="http://cdn.staticfile.org/layui/2.5.7/layui.js"></script>
+
+    <table id="tab_3" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>movie id</th>
+                <th>movie name</th>
+                <th>type</th>
+                <th>summary</th>
+                <th>stars</th>
+                <th>rate</th>
+                <th>director</th>
+                <th>time</th>
+                <th>pic</th>
+            </tr>
+        </thead>
+    </table>
+
+    <script type="text/javascript">
+        // Function to convert API data into DataTables format
+        function formatData(data) {
+            var formattedData = [];
+            var movieData = data.recom_movies.data; // Extract movie data from the API response
+            movieData.forEach(function (item) {
+                formattedData.push([
+                    item.movie_name,
+                    item.type,
+                    item.summary,
+                    item.stars,
+                    item.rate,
+                    item.director,
+                    item.time,
+                    "<img src='" + item.img_url + "' width='50' height='80'>",
+                    "<a href='/people-list.html' target='_blank' class='layui-btn' id='btn' onclick='get_people()'>view</a>"
+                ]);
+            });
+            console.log(formattedData);
+            return formattedData;
+        }
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+
+            // Show the loader
+            var loadingIndex = layer.load(5, {
+                shade: [0.5, '#000']
+            });
+
+            $(document).ready(function () {
+                // Fetch data from the API using AJAX
+                $.ajax({
+                    url: "http://127.0.0.1:5000/movie_recommendation/recommend_user_movie_list?query={{user_id}}",
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        // Hide the loader on successful API response
+                        layer.close(loadingIndex);
+
+                        // On successful API response, format and display data in DataTable
+                        console.log(response.data)
+                        $('#tab_3').DataTable({
+                            data: formatData(response), // Pass the formatted data to DataTables
+                            "columns": [
+                                { "title": "movie name" },
+                                { "title": "type" },
+                                { "title": "summary" },
+                                { "title": "stars" },
+                                { "title": "rate" },
+                                { "title": "director" },
+                                { "title": "time" },
+                                { "title": "pic" },
+                                { "title": "others" }
+                            ]
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        // Hide the loader even if an error occurs during the AJAX call
+                        layer.close(loadingIndex);
+
+                        // Handle API error if needed
+                        console.error("API Error:", status, error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" media="all">
+    <link rel="stylesheet" href="../static/frame/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/frame/static/css/style.css">
+    <script type="text/javascript" src="../static/js/jquery.js"></script>
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="../static/frame/layui/layui.js"></script>
+</head>
+
+<body class="body">
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>movie name</th>
+                <th>type</th>
+                <th>summary</th>
+                <th>stars</th>
+                <th>rate</th>
+                <th>director</th>
+                <th>duration</th>
+                <th>pic</th>
+                <th>others</th>
+            </tr>
+        </thead>
+    </table>
+
+    <script type="text/javascript">
+        layui.use('layer', function () {
+            var layer = layui.layer;
+
+            // Function to convert API data into DataTables format
+            function formatData(data) {
+                var formattedData = [];
+                var movieData = data.recom_same_type_movies.data; // Extract movie data from the API response
+                movieData.forEach(function (item) {
+                    formattedData.push([
+                        item.movie_name,
+                        item.type,
+                        item.summary,
+                        item.stars,
+                        item.rate,
+                        item.director,
+                        item.time,
+                        "<img src='" + item.img_url + "' width='50' height='80'>",
+                        "<a href='/people-list.html' target='_blank' class='layui-btn' id='btn' onclick='get_people()'>view</a>"
+                    ]);
+                });
+                console.log(formattedData)
+                return formattedData;
+            }
+
+            $(document).ready(function () {
+                // Show the loading layer
+                var loadingLayer = layer.load(6, {
+                    shade: [0.5, '#000']
+                });
+
+                // Fetch data from the API using AJAX
+                $.ajax({
+                    url: "http://127.0.0.1:5000/movie_recommendation/same_type?query={{ movieid }}",
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        // On successful API response, format and display data in DataTable
+                        $('#example').DataTable({
+                            data: formatData(response), // Pass the formatted data to DataTables
+                            "columns": [
+                                { "title": "movie name" },
+                                { "title": "type" },
+                                { "title": "summary" },
+                                { "title": "stars" },
+                                { "title": "rate" },
+                                { "title": "director" },
+                                { "title": "time" },
+                                { "title": "pic" },
+                                { "title": "others" }
+                            ]
+                        });
+
+                        // Hide the loading layer after DataTable is initialized
+                        layer.close(loadingLayer);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle API error if needed
+                        console.error("API Error:", status, error);
+
+                        // Hide the loading layer in case of an error as well
+                        layer.close(loadingLayer);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

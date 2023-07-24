@@ -1,0 +1,13 @@
+Flask
+Flask-RESTPlus
+itsdangerous
+pandas
+pymongo
+requests
+tqdm
+numpy
+tensorflow
+scikit-learn
+matplotlib
+beautifulsoup4
+flask-restplus

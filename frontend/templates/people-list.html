@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css"  media="all">
+    <link rel="stylesheet" href="../static/frame/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/frame/static/css/style.css">
+    <script type="text/javascript" src="../static/js/jquery.js"></script>
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="../static/frame/layui/layui.js"></script>
+</head>
+<body class="body">
+<table id="p_tab" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>user id</th>
+                <th>gender</th>
+                <th>age</th>
+                <th>job</th>
+
+            </tr>
+        </thead>
+</table>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function() {
+
+        $('#p_tab').DataTable( {
+            "ajax": "/movie_recommendation/get_favourite_people",
+            "columns": [
+                { "data": "user_id" },
+                { "data": "gender" },
+                { "data": "age" },
+                { "data": "job" },
+            ],
+        } );
+    } );
+</script>
+</body>
+</html>
